@@ -6,96 +6,95 @@
 <title>قهوة 506</title>
 
 <style>
-body{font-family:Arial;margin:0;background:#f4f4f4}
-header{background:#111;color:white;text-align:center;padding:15px}
-.container{padding:20px}
-.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px}
-.product{background:white;padding:15px;border-radius:10px;text-align:center}
-button{background:#111;color:white;border:none;padding:10px;border-radius:6px;width:100%}
-.cart, .checkout{background:white;padding:15px;margin-top:20px;border-radius:10px}
-input{width:100%;padding:10px;margin-top:10px;border-radius:6px;border:1px solid #ccc}
+body{margin:0;font-family:Arial;background:#f5f5f5}
+header{background:#000;color:#fff;text-align:center;padding:15px;font-size:20px}
+.container{padding:15px}
+.products{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.product{background:#fff;padding:15px;border-radius:15px;text-align:center}
+button{padding:10px;border:none;border-radius:10px;width:100%;margin-top:10px}
+.add{background:#000;color:#fff}
+.cart{position:fixed;bottom:0;width:100%;background:#fff;padding:15px;border-top:2px solid #ddd}
+.checkout{background:#28a745;color:white}
 </style>
-
 </head>
+
 <body>
 
-<header>
-<h2>☕ قهوة 506</h2>
-</header>
+<header>☕ قهوة 506</header>
 
 <div class="container">
-
-<h3>المنيو</h3>
-
 <div class="products">
 
 <div class="product">
 <p>V60 ice</p>
 <p>13 ريال</p>
-<button onclick="add('V60 ice',13)">إضافة</button>
+<button class="add" onclick="add('V60 ice',13)">إضافة</button>
 </div>
 
 <div class="product">
 <p>V60 hot</p>
 <p>14 ريال</p>
-<button onclick="add('V60 hot',14)">إضافة</button>
+<button class="add" onclick="add('V60 hot',14)">إضافة</button>
 </div>
 
 <div class="product">
-<p>سبنش لاتيه ايس</p>
+<p>لاتيه</p>
 <p>13 ريال</p>
-<button onclick="add('سبنش لاتيه',13)">إضافة</button>
+<button class="add" onclick="add('لاتيه',13)">إضافة</button>
+</div>
+
+<div class="product">
+<p>كورتادو</p>
+<p>10 ريال</p>
+<button class="add" onclick="add('كورتادو',10)">إضافة</button>
 </div>
 
 </div>
+</div>
 
-<!-- 🛒 السلة -->
 <div class="cart">
-<h3>🛒 السلة</h3>
-<ul id="list"></ul>
 <p id="total">المجموع: 0 ريال</p>
-</div>
-
-<!-- 📦 التوصيل -->
-<div class="checkout">
-<h3>📦 بيانات التوصيل</h3>
-<input placeholder="الاسم" id="name">
-<input placeholder="العنوان" id="address">
-<input placeholder="رقم الجوال" id="phone">
-
-<button onclick="pay()">💳 ادفع الآن</button>
-</div>
-
+<button class="checkout" onclick="checkout()">إتمام الطلب</button>
 </div>
 
 <script>
+let cart = [];
 let total = 0;
 
 function add(name, price){
-  let li = document.createElement("li");
-  li.textContent = name + " - " + price + " ريال";
-  document.getElementById("list").appendChild(li);
-
+  cart.push({name, price});
   total += price;
   document.getElementById("total").textContent = "المجموع: " + total + " ريال";
 }
 
-function pay(){
-  let name = document.getElementById("name").value;
-  let address = document.getElementById("address").value;
-  let phone = document.getElementById("phone").value;
+function checkout(){
+  if(cart.length === 0){
+    alert("السلة فاضية");
+    return;
+  }
+
+  let name = prompt("اسمك");
+  let address = prompt("العنوان");
+  let phone = prompt("رقم الجوال");
 
   if(!name || !address || !phone){
-    alert("❌ عبي كل البيانات");
+    alert("لازم تعبي البيانات");
     return;
   }
 
-  if(total === 0){
-    alert("❌ السلة فاضية");
-    return;
-  }
+  // 🧾 فاتورة
+  let invoice = "🧾 فاتورة قهوة 506\n\n";
+  cart.forEach(item=>{
+    invoice += item.name + " - " + item.price + " ريال\n";
+  });
+  invoice += "\n💰 المجموع: " + total + " ريال";
 
-  alert("✅ تم الطلب بنجاح!\n📦 سيتم التوصيل إلى: " + address + "\n💰 المبلغ: " + total + " ريال");
+  // 🟢 واتساب
+  let whatsapp = "https://wa.me/97430003244?text=" + encodeURIComponent(
+    "طلب جديد:\n\n" + invoice + "\n\n📦 " + address + "\n👤 " + name + "\n📞 " + phone
+  );
+
+  window.open(whatsapp, "_blank");
 }
 </script>
 
